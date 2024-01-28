@@ -22,57 +22,90 @@ class _HomeViewState extends State<HomeView> {
       );
   }
 
+  Future<String> getAppBarTitle() async {
+    final title = await webViewController.getTitle();
+    setState(() {});
+    return title ?? 'Loading..';
+  }
+
   @override
   Widget build(BuildContext context) {
+    FutureBuilder<String> appbarText() {
+      return FutureBuilder<String>(
+        future: getAppBarTitle(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(
+              snapshot.data!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleSmall,
+            );
+          } else if (snapshot.hasError) {
+            return const Icon(
+              Icons.warning,
+              color: Colors.redAccent,
+              size: 32,
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Webview'),
-        actions: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () async {
-                  final ScaffoldMessengerState messenger =
-                      ScaffoldMessenger.of(context);
-                  if (await webViewController.canGoBack()) {
-                    await webViewController.goBack();
-                  } else {
-                    messenger.showSnackBar(
-                      const SnackBar(
-                        content: Text('Cant go back'),
-                      ),
-                    );
-                    return;
-                  }
-                },
-                icon: const Icon(Icons.arrow_back_ios),
-              ),
-              IconButton(
-                onPressed: () async {
-                  final ScaffoldMessengerState messenger =
-                      ScaffoldMessenger.of(context);
-                  if (await webViewController.canGoForward()) {
-                    await webViewController.goForward();
-                  } else {
-                    messenger.showSnackBar(
-                      const SnackBar(
-                        content: Text('Cant go forward'),
-                      ),
-                    );
-                    return;
-                  }
-                },
-                icon: const Icon(Icons.arrow_forward_ios),
-              ),
-              IconButton(
-                onPressed: () {
-                  webViewController.reload();
-                },
-                icon: const Icon(Icons.replay),
-              ),
-            ],
-          )
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56.0), //appbar height
+        child: AppBar(
+          title: appbarText(),
+          actions: [
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () async {
+                    final ScaffoldMessengerState messenger =
+                        ScaffoldMessenger.of(context);
+                    if (await webViewController.canGoBack()) {
+                      await webViewController.goBack();
+                    } else {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          content: Text('Cant go back'),
+                        ),
+                      );
+                      return;
+                    }
+                  },
+                  icon: const Icon(Icons.arrow_back_ios),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    final ScaffoldMessengerState messenger =
+                        ScaffoldMessenger.of(context);
+                    if (await webViewController.canGoForward()) {
+                      await webViewController.goForward();
+                    } else {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          content: Text('Cant go forward'),
+                        ),
+                      );
+                      return;
+                    }
+                  },
+                  icon: const Icon(Icons.arrow_forward_ios),
+                ),
+                IconButton(
+                  onPressed: () {
+                    webViewController.reload();
+                  },
+                  icon: const Icon(Icons.replay),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
       body: MyWebView(controller: webViewController),
     );
