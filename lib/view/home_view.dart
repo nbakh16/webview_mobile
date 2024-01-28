@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_mobile/view/my_webview.dart';
+import '../config/web_navigator.dart';
 import '../web_url.dart';
 
 class HomeView extends StatefulWidget {
@@ -26,34 +27,6 @@ class _HomeViewState extends State<HomeView> {
     final title = await webViewController.getTitle();
     setState(() {});
     return title ?? 'Loading..';
-  }
-
-  void goBack() async {
-    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
-    if (await webViewController.canGoBack()) {
-      await webViewController.goBack();
-    } else {
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text("Can't go back"),
-        ),
-      );
-      return;
-    }
-  }
-
-  void goForward() async {
-    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
-    if (await webViewController.canGoForward()) {
-      await webViewController.goForward();
-    } else {
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text("Can't go forward"),
-        ),
-      );
-      return;
-    }
   }
 
   @override
@@ -84,7 +57,11 @@ class _HomeViewState extends State<HomeView> {
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (popped) => goBack(),
+      onPopInvoked: (_) => WebNavigator.goBack(
+        context,
+        webViewController,
+        canPop: true,
+      ),
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(56.0), //appbar height
@@ -94,11 +71,17 @@ class _HomeViewState extends State<HomeView> {
               Row(
                 children: [
                   IconButton(
-                    onPressed: goBack,
+                    onPressed: () => WebNavigator.goBack(
+                      context,
+                      webViewController,
+                    ),
                     icon: const Icon(Icons.arrow_back_ios),
                   ),
                   IconButton(
-                    onPressed: goForward,
+                    onPressed: () => WebNavigator.goForward(
+                      context,
+                      webViewController,
+                    ),
                     icon: const Icon(Icons.arrow_forward_ios),
                   ),
                   IconButton(
