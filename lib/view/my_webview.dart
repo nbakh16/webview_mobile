@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_mobile/config/color.dart';
 
 class MyWebView extends StatefulWidget {
   const MyWebView({super.key, required this.controller});
@@ -11,7 +12,7 @@ class MyWebView extends StatefulWidget {
 }
 
 class _MyWebViewState extends State<MyWebView> {
-  var loadingPercentage = 0;
+  int loadingPercentage = 0;
 
   @override
   void initState() {
@@ -19,7 +20,7 @@ class _MyWebViewState extends State<MyWebView> {
     widget.controller
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageStarted: (url) {
+          onPageStarted: (_) {
             setState(() {
               loadingPercentage = 0;
             });
@@ -29,7 +30,7 @@ class _MyWebViewState extends State<MyWebView> {
               loadingPercentage = progress;
             });
           },
-          onPageFinished: (url) {
+          onPageFinished: (_) {
             setState(() {
               loadingPercentage = 100;
             });
@@ -52,7 +53,12 @@ class _MyWebViewState extends State<MyWebView> {
       children: [
         WebViewWidget(controller: widget.controller),
         if (loadingPercentage < 100)
-          LinearProgressIndicator(value: loadingPercentage / 100),
+          LinearProgressIndicator(
+            value: loadingPercentage / 100,
+            color: kSecondaryColor,
+            backgroundColor: kSecondaryLightColor,
+            minHeight: 6,
+          ),
       ],
     );
   }

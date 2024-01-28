@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_mobile/config/color.dart';
 import 'package:webview_mobile/view/my_webview.dart';
 import '../config/web_navigator.dart';
 import '../web_url.dart';
+import '../widget/custom_btn.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -38,9 +40,12 @@ class _HomeViewState extends State<HomeView> {
           if (snapshot.hasData) {
             return Text(
               snapshot.data!,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleSmall,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(color: Colors.white),
             );
           } else if (snapshot.hasError) {
             return const Icon(
@@ -55,47 +60,53 @@ class _HomeViewState extends State<HomeView> {
       );
     }
 
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (_) => WebNavigator.goBack(
-        context,
-        webViewController,
-        canPop: true,
-      ),
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(56.0), //appbar height
-          child: AppBar(
-            title: appbarText(),
-            actions: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => WebNavigator.goBack(
-                      context,
-                      webViewController,
-                    ),
-                    icon: const Icon(Icons.arrow_back_ios),
-                  ),
-                  IconButton(
-                    onPressed: () => WebNavigator.goForward(
-                      context,
-                      webViewController,
-                    ),
-                    icon: const Icon(Icons.arrow_forward_ios),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      webViewController.reload();
-                    },
-                    icon: const Icon(Icons.replay),
-                  ),
-                ],
-              )
-            ],
-          ),
+    return RefreshIndicator(
+      onRefresh: () async {
+        webViewController.reload();
+      },
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (_) => WebNavigator.goBack(
+          context,
+          webViewController,
+          canPop: true,
         ),
-        body: MyWebView(controller: webViewController),
+        child: Scaffold(
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(50.0), //appbar height
+            child: AppBar(
+              backgroundColor: kPrimaryColor,
+              title: appbarText(),
+            ),
+          ),
+          bottomSheet: ColoredBox(
+            color: kPrimaryColor,
+            child: Row(
+              children: [
+                CustomIconButton(
+                  onTap: () => webViewController.reload(),
+                  icon: Icons.replay,
+                ),
+                const Spacer(),
+                CustomIconButton(
+                  onTap: () => WebNavigator.goBack(
+                    context,
+                    webViewController,
+                  ),
+                  icon: Icons.arrow_back_ios,
+                ),
+                CustomIconButton(
+                  onTap: () => WebNavigator.goForward(
+                    context,
+                    webViewController,
+                  ),
+                  icon: Icons.arrow_forward_ios,
+                ),
+              ],
+            ),
+          ),
+          body: MyWebView(controller: webViewController),
+        ),
       ),
     );
   }

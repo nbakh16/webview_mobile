@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:webview_mobile/config/color.dart';
 import 'custom_btn.dart';
 
 void customConfirmationDialog({
@@ -35,17 +35,8 @@ void customConfirmationDialog({
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-                // IconButton(
-                //   onPressed: () {
-                //     Get.back();
-                //   },
-                //   icon: const Icon(
-                //     Icons.cancel_outlined,
-                //     color: kRed,
-                //   ),
-                // ),
               ],
             ),
             content: Column(
@@ -56,9 +47,7 @@ void customConfirmationDialog({
                   subtitle,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                const SizedBox(
-                  height: 32,
-                ),
+                const SizedBox(height: 32),
                 Row(
                   children: [
                     Expanded(
@@ -68,7 +57,7 @@ void customConfirmationDialog({
                         padding: const EdgeInsets.symmetric(
                             vertical: 6, horizontal: 12),
                         btnColor: Colors.white,
-                        textColor: Colors.purple,
+                        textColor: kPrimaryColor,
                         borderWidth: 1.25,
                         elevation: 0,
                         onPressed: () {

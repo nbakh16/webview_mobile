@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:webview_mobile/config/color.dart';
 import 'package:webview_mobile/view/home_view.dart';
 
 void main() {
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Web View',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: kPrimaryColor),
       ),
       home: const HomeView(),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:webview_mobile/config/color.dart';
 
 class PrimaryBtn extends StatelessWidget {
   final Color? color;
@@ -47,7 +48,7 @@ class PrimaryBtn extends StatelessWidget {
                   ?.copyWith(color: Colors.white),
           disabledBackgroundColor: Colors.grey,
           disabledForegroundColor: Colors.white,
-          backgroundColor: btnColor ?? Colors.purple,
+          backgroundColor: btnColor ?? kPrimaryColor,
           foregroundColor: textColor ?? Colors.white,
           padding: padding ??
               const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
@@ -55,11 +56,34 @@ class PrimaryBtn extends StatelessWidget {
             borderRadius: BorderRadius.circular(borderRadius ?? 10.0),
           ),
           side: BorderSide(
-            color: color ?? Colors.purple,
+            color: color ?? kPrimaryColor,
             width: borderWidth ?? 0,
           ),
         ),
         child: FittedBox(child: Text(text)),
+      ),
+    );
+  }
+}
+
+class CustomIconButton extends StatelessWidget {
+  const CustomIconButton({
+    super.key,
+    this.onTap,
+    required this.icon,
+  });
+
+  final void Function()? onTap;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: onTap,
+      icon: Icon(
+        icon,
+        color: Colors.white,
+        size: 28,
       ),
     );
   }
