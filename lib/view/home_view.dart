@@ -28,6 +28,34 @@ class _HomeViewState extends State<HomeView> {
     return title ?? 'Loading..';
   }
 
+  void goBack() async {
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+    if (await webViewController.canGoBack()) {
+      await webViewController.goBack();
+    } else {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text("Can't go back"),
+        ),
+      );
+      return;
+    }
+  }
+
+  void goForward() async {
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+    if (await webViewController.canGoForward()) {
+      await webViewController.goForward();
+    } else {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text("Can't go forward"),
+        ),
+      );
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     FutureBuilder<String> appbarText() {
@@ -54,60 +82,38 @@ class _HomeViewState extends State<HomeView> {
       );
     }
 
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56.0), //appbar height
-        child: AppBar(
-          title: appbarText(),
-          actions: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () async {
-                    final ScaffoldMessengerState messenger =
-                        ScaffoldMessenger.of(context);
-                    if (await webViewController.canGoBack()) {
-                      await webViewController.goBack();
-                    } else {
-                      messenger.showSnackBar(
-                        const SnackBar(
-                          content: Text('Cant go back'),
-                        ),
-                      );
-                      return;
-                    }
-                  },
-                  icon: const Icon(Icons.arrow_back_ios),
-                ),
-                IconButton(
-                  onPressed: () async {
-                    final ScaffoldMessengerState messenger =
-                        ScaffoldMessenger.of(context);
-                    if (await webViewController.canGoForward()) {
-                      await webViewController.goForward();
-                    } else {
-                      messenger.showSnackBar(
-                        const SnackBar(
-                          content: Text('Cant go forward'),
-                        ),
-                      );
-                      return;
-                    }
-                  },
-                  icon: const Icon(Icons.arrow_forward_ios),
-                ),
-                IconButton(
-                  onPressed: () {
-                    webViewController.reload();
-                  },
-                  icon: const Icon(Icons.replay),
-                ),
-              ],
-            )
-          ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (popped) => goBack(),
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(56.0), //appbar height
+          child: AppBar(
+            title: appbarText(),
+            actions: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: goBack,
+                    icon: const Icon(Icons.arrow_back_ios),
+                  ),
+                  IconButton(
+                    onPressed: goForward,
+                    icon: const Icon(Icons.arrow_forward_ios),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      webViewController.reload();
+                    },
+                    icon: const Icon(Icons.replay),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
+        body: MyWebView(controller: webViewController),
       ),
-      body: MyWebView(controller: webViewController),
     );
   }
 }
